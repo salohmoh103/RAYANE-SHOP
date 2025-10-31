@@ -154,7 +154,6 @@ if(last){document.getElementById('fullName').value=last.title;}
 }
 
 function closeCheckout(){document.getElementById('checkoutModal').style.display='none';}
-
 function submitOrder() {
   const name = document.getElementById('fullName').value;
   const email = document.getElementById('email').value;
@@ -165,14 +164,18 @@ function submitOrder() {
     return;
   }
 
+  const productNames = cart.map(i => i.title).join(", ");
+  const productPrices = cart.map(i => i.price + " د.ج").join(", ");
+
   emailjs.send(
     "service_jae833s",       // Service ID
     "template_ja011yl",      // Template ID
     {
-      from_name: name,
-      email: email,
-      order_details: cart.map(i => `${i.title} x${i.qty}`).join(", "),
-      payment_method: method
+      user_name: name,
+      user_email: email,
+      payment_method: method,
+      product_name: productNames,
+      product_price: productPrices
     }
   ).then(() => {
     alert(`شكراً ${name}! تم طلب المنتج بنجاح.`);
@@ -184,6 +187,8 @@ function submitOrder() {
   closeCheckout();
   closeCart();
 }
+
+
 
 
 document.getElementById('searchInput').addEventListener('input',function(e){
@@ -205,3 +210,4 @@ updateCartUI();
 
 </body>
 </html>
+
