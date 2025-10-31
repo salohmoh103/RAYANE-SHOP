@@ -170,20 +170,25 @@ if(last){document.getElementById('fullName').value=last.title;}
 
 function closeCheckout(){document.getElementById('checkoutModal').style.display='none';}
 
-function submitOrder(){
-const name=document.getElementById('fullName').value;
-const email=document.getElementById('email').value;
-const method=document.getElementById('paymentMethod').value;
-if(!name || !email){alert('الرجاء ملء جميع الحقول'); return;}
-emailjs.send("service_jae833s","template_ja011yl",{
-from_name:name,
-email:email,
-order_details:cart.map(i=>`${i.title} x${i.qty}`).join(', '),
-payment_method:method
-}).then(()=>{alert(`شكراً ${name}! تم طلب المنتج بنجاح.`);},
-(err)=>{alert("حدث خطأ أثناء إرسال الطلب: "+err.text);});
-clearCart(); closeCheckout(); closeCart();
+function submitOrder() {
+  const name = document.getElementById('fullName').value;
+  const email = document.getElementById('email').value;
+  const method = document.getElementById('paymentMethod').value;
+
+  if(!name || !email){
+    alert('الرجاء ملء جميع الحقول');
+    return;
+  }
+
+  // إلغاء EmailJS
+  // فقط عرض رسالة نجاح محلياً
+  alert(`شكراً ${name}! تم طلب المنتج بنجاح.\nطريقة الدفع: ${method}`);
+
+  clearCart();
+  closeCheckout();
+  closeCart();
 }
+
 
 document.getElementById('searchInput').addEventListener('input',function(e){
 const q=e.target.value.trim(); if(!q) renderProducts(products); else renderProducts(products.filter(p=>p.title.includes(q)||p.meta.includes(q)));
@@ -194,3 +199,4 @@ updateCartUI();
 </script>
 </body>
 </html>
+
