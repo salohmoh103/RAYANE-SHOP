@@ -105,14 +105,6 @@ const products=[
 {id:1,title:'حساب فري فاير - مستوى 59 + سكنات',price:4500,meta:'تسليم فوري',img:'https://i.pinimg.com/736x/e6/40/55/e6405574938e46795f8a2d86f95fe416.jpg'},
 {id:2,title:'حساب Steam - ألعاب متعددة',price:7200,meta:'2FA مفعل',img:'https://i.pinimg.com/736x/12/c0/c9/12c0c9229040937d043d01f74b1d3f4b.jpg'},
 {id:3,title:'حساب GTA V RP مع كل الحقوق',price:1000,meta:'تسليم فوري',img:'https://i.imgur.com/g5tXGRL.jpeg'}
-  {id:4,
- title:'حسابات تيك توك',
- price:0, 
- meta:'تسليم فوري',
- img:'https://i.pinimg.com/736x/d8/a2/1e/d8a21e756173befdf886a0d15f6afac6.jpg',
- isTikTok:true
-}
-
 ];
 
 const cart=[];
@@ -127,24 +119,11 @@ grid.appendChild(card);
 }
 
 function addToCart(id){
-  const p = products.find(x => x.id === id);
-
-  if(p.isTikTok){
-    const qty = prompt("اختر عدد المتابعين:\n100\n500\n1000\n5000\n10000\n50000");
-    if(!qty) return;
-    const price = qty * 1; // السعر لكل متابع
-    cart.push({id:p.id,title:p.title + " - " + qty + " متابع",price:price,qty:1,img:p.img});
-  } else {
-    const exists = cart.find(i => i.id === id);
-    if(exists) exists.qty++; 
-    else cart.push({id:p.id,title:p.title,price:p.price,qty:1,img:p.img});
-  }
-
-  localStorage.setItem('lastProduct', JSON.stringify(p));
-  updateCartUI();
-  openCart();
-}
-
+const p=products.find(x=>x.id===id);
+const exists=cart.find(i=>i.id===id);
+if(exists) exists.qty++; else cart.push({id:p.id,title:p.title,price:p.price,qty:1,img:p.img});
+localStorage.setItem('lastProduct', JSON.stringify(p));
+updateCartUI(); openCart();
 }
 
 function updateCartUI(){
