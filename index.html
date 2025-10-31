@@ -102,10 +102,12 @@ emailjs.init("H1UCQ3TNmVxTTUxaJ"); // public key
 
 <script>
 const products=[
-{id:1,title:'حساب فري فاير - مستوى 59 + سكنات',price:4500,meta:'تسليم فوري',img:'https://i.pinimg.com/736x/e6/40/55/e6405574938e46795f8a2d86f95fe416.jpg'},
-{id:2,title:'حساب Steam - ألعاب متعددة',price:7200,meta:'2FA مفعل',img:'https://i.pinimg.com/736x/12/c0/c9/12c0c9229040937d043d01f74b1d3f4b.jpg'},
-{id:3,title:'حساب GTA V RP مع كل الحقوق',price:1000,meta:'تسليم فوري',img:'https://i.imgur.com/g5tXGRL.jpeg'}
+  {id:1,title:'حساب فري فاير - مستوى 59 + سكنات',price:4500,meta:'تسليم فوري',img:'https://i.pinimg.com/736x/e6/40/55/e6405574938e46795f8a2d86f95fe416.jpg'},
+  {id:2,title:'حساب Steam - ألعاب متعددة',price:7200,meta:'2FA مفعل',img:'https://i.pinimg.com/736x/12/c0/c9/12c0c9229040937d043d01f74b1d3f4b.jpg'},
+  {id:3,title:'حساب GTA V RP مع كل الحقوق',price:1000,meta:'تسليم فوري',img:'https://i.imgur.com/g5tXGRL.jpeg'},
+  {id:4, title:'حسابات تيك توك', price:0, meta:'تسليم فوري', img:'https://i.pinimg.com/736x/d8/a2/1e/d8a21e756173befdf886a0d15f6afac6.jpg', isTikTok:true}
 ];
+
 
 const cart=[];
 
@@ -119,12 +121,25 @@ grid.appendChild(card);
 }
 
 function addToCart(id){
-const p=products.find(x=>x.id===id);
-const exists=cart.find(i=>i.id===id);
-if(exists) exists.qty++; else cart.push({id:p.id,title:p.title,price:p.price,qty:1,img:p.img});
-localStorage.setItem('lastProduct', JSON.stringify(p));
-updateCartUI(); openCart();
+  const p = products.find(x => x.id === id);
+
+  if(p.isTikTok){
+    // اختيار عدد المتابعين
+    const qty = prompt("اختر عدد المتابعين:\n100\n500\n1000\n5000\n10000\n50000");
+    if(!qty) return; // إذا ألغى المستخدم
+    const price = qty * 1; // عدل السعر حسب رغبتك
+    cart.push({id:p.id,title:p.title + " - " + qty + " متابع",price:price,qty:1,img:p.img});
+  } else {
+    const exists = cart.find(i => i.id === id);
+    if(exists) exists.qty++; 
+    else cart.push({id:p.id,title:p.title,price:p.price,qty:1,img:p.img});
+  }
+
+  localStorage.setItem('lastProduct', JSON.stringify(p));
+  updateCartUI();
+  openCart();
 }
+
 
 function updateCartUI(){
 document.getElementById('cartBtn').innerText=`عربة (${cart.reduce((s,i)=>s+i.qty,0)})`;
@@ -154,42 +169,21 @@ if(last){document.getElementById('fullName').value=last.title;}
 }
 
 function closeCheckout(){document.getElementById('checkoutModal').style.display='none';}
-function submitOrder() {
-  const name = document.getElementById('fullName').value;
-  const email = document.getElementById('email').value;
-  const method = document.getElementById('paymentMethod').value;
 
-  if(!name || !email){
-    alert('الرجاء ملء جميع الحقول');
-    return;
-  }
-
-  const productNames = cart.map(i => i.title).join(", ");
-  const productPrices = cart.map(i => i.price + " د.ج").join(", ");
-
-  emailjs.send(
-    "service_jae833s",       // Service ID
-    "template_ja011yl",      // Template ID
-    {
-      user_name: name,
-      user_email: email,
-      payment_method: method,
-      product_name: productNames,
-      product_price: productPrices
-    }
-  ).then(() => {
-    alert(`شكراً ${name}! تم طلب المنتج بنجاح.`);
-  }, (err) => {
-    alert("حدث خطأ أثناء الإرسال: " + err.text);
-  });
-
-  clearCart();
-  closeCheckout();
-  closeCart();
+function submitOrder(){
+const name=document.getElementById('fullName').value;
+const email=document.getElementById('email').value;
+const method=document.getElementById('paymentMethod').value;
+if(!name || !email){alert('الرجاء ملء جميع الحقول'); return;}
+emailjs.send("service_jae833s","template_ja011yl",{
+from_name:name,
+email:email,
+order_details:cart.map(i=>`${i.title} x${i.qty}`).join(', '),
+payment_method:method
+}).then(()=>{alert(`شكراً ${name}! تم طلب المنتج بنجاح.`);},
+(err)=>{alert("حدث خطأ أثناء إرسال الطلب: "+err.text);});
+clearCart(); closeCheckout(); closeCart();
 }
-
-
-
 
 document.getElementById('searchInput').addEventListener('input',function(e){
 const q=e.target.value.trim(); if(!q) renderProducts(products); else renderProducts(products.filter(p=>p.title.includes(q)||p.meta.includes(q)));
@@ -198,17 +192,5 @@ const q=e.target.value.trim(); if(!q) renderProducts(products); else renderProdu
 renderProducts(products);
 updateCartUI();
 </script>
-<!-- EmailJS SDK الحديثة -->
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-<script type="text/javascript">
-  (function(){
-    emailjs.init({
-      publicKey: "H1UCQ3TNmVxTTUxaJ",  // ضع هنا Public Key الخاص بك
-    });
-  })();
-</script>
-
 </body>
 </html>
-
-
