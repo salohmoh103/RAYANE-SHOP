@@ -170,39 +170,22 @@ if(last){document.getElementById('fullName').value=last.title;}
 
 function closeCheckout(){document.getElementById('checkoutModal').style.display='none';}
 
-function submitOrder() {
-  const name = document.getElementById('fullName').value;
-  const email = document.getElementById('email').value;
-  const method = document.getElementById('paymentMethod').value;
-
-  if(!name || !email){
-    alert('الرجاء ملء جميع الحقول');
-    return;
+emailjs.send(
+  "service_jae833s",
+  "template_ja011yl",
+  {
+    user_name: name,
+    user_email: email,
+    payment_method: method,
+    product_name: productNames,
+    product_price: productPrices
   }
+).then(() => {
+  alert(`شكراً ${name}! تم طلب المنتج بنجاح.`);
+}, (err) => {
+  alert("حدث خطأ أثناء الإرسال: " + err.text);
+});
 
-  const productNames = cart.map(i => i.title).join(", ");
-  const productPrices = cart.map(i => i.price + " د.ج").join(", ");
-
-  emailjs.send(
-    "service_jae833s",       // Service ID
-    "template_ja011yl",      // Template ID
-    {
-      user_name: name,
-      user_email: email,
-      payment_method: method,
-      product_name: productNames,
-      product_price: productPrices
-    }
-  ).then(() => {
-    alert(`شكراً ${name}! تم طلب المنتج بنجاح.`);
-  }, (err) => {
-    alert("حدث خطأ أثناء الإرسال: " + err.text);
-  });
-
-  clearCart();
-  closeCheckout();
-  closeCart();
-}
 
 document.getElementById('searchInput').addEventListener('input',function(e){
 const q=e.target.value.trim(); if(!q) renderProducts(products); else renderProducts(products.filter(p=>p.title.includes(q)||p.meta.includes(q)));
@@ -211,7 +194,18 @@ const q=e.target.value.trim(); if(!q) renderProducts(products); else renderProdu
 renderProducts(products);
 updateCartUI();
 </script>
+  <!-- سكربتات الموقع الأخرى مثل renderProducts و submitOrder -->
+<script>
+  // كل أكواد JS الخاصة بالموقع هنا
+</script>
+
+<!-- SDK الحديثة لـ EmailJS -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script type="text/javascript">
+  emailjs.init("H1UCQ3TNmVxTTUxaJ"); // ضع هنا Public Key الخاص بك
+</script>
 </body>
 </html>
+
 
 
